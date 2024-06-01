@@ -47,6 +47,8 @@ mod tests {
     for &t in ts {
       assert_eq!(t + T::zero(), t);
       assert_eq!(T::zero() + t, t);
+      assert_eq!(t - T::zero(), t);
+      assert_eq!(T::zero() - t, -t);
       assert_eq!(t * T::zero(), T::zero());
       assert_eq!(T::zero() * t, T::zero());
       assert_eq!(-T::zero(), T::zero());
