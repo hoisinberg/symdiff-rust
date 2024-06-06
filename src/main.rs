@@ -1,3 +1,3 @@
-pub mod field;
+pub mod arithmetic;
 
 fn main() {}

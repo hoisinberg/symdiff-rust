@@ -1,25 +1,24 @@
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-/// A type whose instances and operations are assumed to satisfy the axioms that define a [field](
-/// https://en.wikipedia.org/wiki/Field_(mathematics)) in the mathematical sense.
-pub trait Field<T = Self>:
+/// Represents a type equipped with the 4 basic arithmetic operations: addition, subtraction,
+/// multiplication, and division.
+pub trait Arithmetic<T = Self>:
   Add<T, Output = Self>
   + Sub<T, Output = Self>
   + Mul<T, Output = Self>
   + Div<T, Output = Self>
   + Neg<Output = Self>
-  + Copy
 {
-  /// The additive identity element of the field, satisfying for all `t: T` equations like
+  /// The additive identity element, satisfying for all `t: T` equations like
   /// `t + zero<T>() == t`, etc.
   fn zero() -> Self;
 
-  /// The multiplicative identity element of the field, satisfying for all `t: T` equations like
+  /// The multiplicative identity element, satisfying for all `t: T` equations like
   /// `t * one<T>() == t`, etc.
   fn one() -> Self;
 }
 
-impl Field for f32 {
+impl Arithmetic for f32 {
   fn zero() -> f32 {
     return 0.0;
   }
@@ -28,7 +27,7 @@ impl Field for f32 {
   }
 }
 
-impl Field for f64 {
+impl Arithmetic for f64 {
   fn zero() -> f64 {
     return 0.0;
   }
@@ -41,9 +40,9 @@ impl Field for f64 {
 mod tests {
   use std::fmt::Debug;
 
-  use crate::field::Field;
+  use crate::arithmetic::Arithmetic;
 
-  fn assert_additive_identity<T: Field + PartialEq<T> + Debug>(ts: &[T]) {
+  fn assert_additive_identity<T: Arithmetic + PartialEq<T> + Copy + Debug>(ts: &[T]) {
     for &t in ts {
       assert_eq!(t + T::zero(), t);
       assert_eq!(T::zero() + t, t);
@@ -55,7 +54,7 @@ mod tests {
     }
   }
 
-  fn assert_multiplicative_identity<T: Field + PartialEq<T> + Debug>(ts: &[T]) {
+  fn assert_multiplicative_identity<T: Arithmetic + PartialEq<T> + Copy + Debug>(ts: &[T]) {
     for &t in ts {
       assert_eq!(t * T::one(), t);
       assert_eq!(T::one() * t, t);
