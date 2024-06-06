@@ -40,7 +40,7 @@ impl Arithmetic for f64 {
 mod tests {
   use std::fmt::Debug;
 
-  use crate::arithmetic::Arithmetic;
+  use crate::core::arithmetic::Arithmetic;
 
   fn assert_additive_identity<T: Arithmetic + PartialEq<T> + Copy + Debug>(ts: &[T]) {
     for &t in ts {
