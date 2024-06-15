@@ -1,36 +1,32 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
-
-/// Represents a type equipped with the 4 basic arithmetic operations: addition, subtraction,
-/// multiplication, and division.
-pub trait Arithmetic<T = Self>:
-  Add<T, Output = Self>
-  + Sub<T, Output = Self>
-  + Mul<T, Output = Self>
-  + Div<T, Output = Self>
-  + Neg<Output = Self>
-{
-  /// The additive identity element, satisfying for all `t: T` equations like
-  /// `t + zero<T>() == t`, etc.
+/// The additive identity element for the implementing type, satisfying for all `t: T` equations
+/// like `t + zero<T>() == t`, etc.
+pub trait Zero {
   fn zero() -> Self;
+}
 
-  /// The multiplicative identity element, satisfying for all `t: T` equations like
-  /// `t * one<T>() == t`, etc.
+/// The multiplicative identity element for the implementing type, satisfying for all `t: T`
+/// equations like `t * one<T>() == t`, etc.
+pub trait One {
   fn one() -> Self;
 }
 
-impl Arithmetic for f32 {
+impl Zero for f32 {
   fn zero() -> f32 {
     return 0.0;
   }
+}
+impl One for f32 {
   fn one() -> f32 {
     return 1.0;
   }
 }
 
-impl Arithmetic for f64 {
+impl Zero for f64 {
   fn zero() -> f64 {
     return 0.0;
   }
+}
+impl One for f64 {
   fn one() -> f64 {
     return 1.0;
   }
@@ -38,11 +34,27 @@ impl Arithmetic for f64 {
 
 #[cfg(test)]
 mod tests {
-  use std::fmt::Debug;
+  use std::{
+    fmt::Debug,
+    ops::{Add, Div, Mul, Neg, Sub},
+  };
 
-  use crate::core::arithmetic::Arithmetic;
+  use super::{One, Zero};
 
-  fn assert_additive_identity<T: Arithmetic + PartialEq<T> + Copy + Debug>(ts: &[T]) {
+  trait Arithmetic<T = Self>:
+    Add<T, Output = T>
+    + Sub<T, Output = T>
+    + Mul<T, Output = T>
+    + Div<T, Output = T>
+    + Neg<Output = T>
+    + Zero
+    + One
+  {
+  }
+  impl Arithmetic for f32 {}
+  impl Arithmetic for f64 {}
+
+  fn assert_additive_identity<T: Arithmetic<T> + PartialEq<T> + Copy + Debug>(ts: &[T]) {
     for &t in ts {
       assert_eq!(t + T::zero(), t);
       assert_eq!(T::zero() + t, t);
@@ -54,7 +66,7 @@ mod tests {
     }
   }
 
-  fn assert_multiplicative_identity<T: Arithmetic + PartialEq<T> + Copy + Debug>(ts: &[T]) {
+  fn assert_multiplicative_identity<T: Arithmetic<T> + PartialEq<T> + Copy + Debug>(ts: &[T]) {
     for &t in ts {
       assert_eq!(t * T::one(), t);
       assert_eq!(T::one() * t, t);
@@ -62,7 +74,7 @@ mod tests {
     }
   }
 
-  static F32_TEST_VALUES:&[f32] = &[-1.0, 0.0, 1.0, std::f32::consts::PI, std::f32::consts::E];
+  static F32_TEST_VALUES: &[f32] = &[-1.0, 0.0, 1.0, std::f32::consts::PI, std::f32::consts::E];
 
   #[test]
   fn test_f32_zero_is_additive_identity() {
@@ -74,7 +86,7 @@ mod tests {
     assert_multiplicative_identity::<f32>(F32_TEST_VALUES);
   }
 
-  static F64_TEST_VALUES:&[f64] = &[-1.0, 0.0, 1.0, std::f64::consts::PI, std::f64::consts::E];
+  static F64_TEST_VALUES: &[f64] = &[-1.0, 0.0, 1.0, std::f64::consts::PI, std::f64::consts::E];
 
   #[test]
   fn test_f64_zero_is_additive_identity() {
